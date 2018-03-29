@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Юлия Потявина](https://up.htmlacademy.ru/javascript/13/user/546401).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Катревич](https://htmlacademy.ru/profile/id189351).
 
 ---
 
