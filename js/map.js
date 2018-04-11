@@ -9,15 +9,15 @@ var avatars = ['01', '02', '03', '04', '05', '06', '07', '08'];
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
 // Функция для случайного числа
-var getRandomNumber = function(min, max) {
+var getRandomNumber = function (min, max) {
   return Math.floor(min + Math.random() * (max - min));
 };
 
 // Случайная сортировка массивов
-var sortRandomArray = function(arr) {
+var sortRandomArray = function (arr) {
   function compareRandom() {
     return Math.random() - 0.5;
-  };
+  }
   return arr.sort(compareRandom);
 };
 
@@ -27,14 +27,14 @@ sortRandomArray(features);
 sortRandomArray(photos);
 
 // Функция для рандомного индекса
-var getRandomIndex = function(arr) {
+var getRandomIndex = function (arr) {
   var index = getRandomNumber(0, arr.length);
   return index;
 };
 
 //  Функция перевода типа
-var translateType = function(type) {
-  switch(type) {
+var translateType = function (type) {
+  switch (type) {
     case 'palace':
       return 'Дворец';
     case 'flat':
@@ -50,14 +50,14 @@ var translateType = function(type) {
 
 
 // Функция создания объявлений
-var createAds = function(maxAds) {
+var createAds = function (maxAds) {
   var ads = [];
   var featuresList = [];
   var randomNumber = getRandomNumber(0, features.length);
   for (var i = 0; i < randomNumber; i++) {
     featuresList.push(features[i]);
   }
-  for (var i = 0; i < maxAds; i++) {
+  for (i = 0; i < maxAds; i++) {
     var ad = {
       'author': {
         'avatar': 'img/avatars/user' + avatars[i] + '.png'
@@ -92,10 +92,10 @@ var map = document.querySelector('.map');
 map.classList.remove('map--faded');
 
 // Шаблон меток
-var  adsPin = document.querySelector('template').content.querySelector('.map__pin');
+var adsPin = document.querySelector('template').content.querySelector('.map__pin');
 
 // Создание метки
-var renderPin = function(ads, i) {
+var renderPin = function (ads, i) {
   var pin = adsPin.cloneNode(true);
   pin.querySelector('img').src = ads[i].author.avatar;
   pin.querySelector('img').alt = ads[i].offer.title;
@@ -105,7 +105,7 @@ var renderPin = function(ads, i) {
   return pin;
 };
 
-var displayPinList = function() {
+var displayPinList = function () {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < adCollection.length; i++) {
     fragment.appendChild(renderPin(adCollection, i));
@@ -117,32 +117,32 @@ var displayPinList = function() {
 var adsCard = document.querySelector('template').content.querySelector('.map__card');
 
 // Создание элементов features
-var createFeatureElements = function(features) {
+var createFeatureElements = function (array) {
   var fragment = document.createDocumentFragment();
   var featureElement;
-  for (var i = 0; i < features.length; i++) {
+  for (var i = 0; i < array.length; i++) {
     featureElement = document.createElement('li');
-    featureElement.className = 'popup__feature popup__feature--' + features[i];
+    featureElement.className = 'popup__feature popup__feature--' + array[i];
     fragment.appendChild(featureElement);
   }
   return fragment;
 };
 
-var createPhotoElements = function(photos) {
+var createPhotoElements = function (array) {
   var fragment = document.createDocumentFragment();
   var photoElement;
-  for (var i = 0; i < photos.length; i++) {
+  for (var i = 0; i < array.length; i++) {
     photoElement = document.createElement('img');
     photoElement.classList.add('popup__photo');
     photoElement.width = '45';
     photoElement.height = '40';
-    photoElement.src = photos[i];
+    photoElement.src = array[i];
     fragment.appendChild(photoElement);
   }
   return fragment;
 };
 
-var renderCard = function(ads, i) {
+var renderCard = function (ads, i) {
   var card = adsCard.cloneNode(true);
   card.querySelector('.popup__title').textContent = ads[i].offer.title;
   card.querySelector('.popup__text--address').textContent = ads[i].offer.address;
@@ -159,7 +159,7 @@ var renderCard = function(ads, i) {
   return card;
 };
 
-var displayCardList = function() {
+var displayCardList = function () {
   var fragment = document.createDocumentFragment();
   var cardContainer = document.querySelector('.map__filters-container');
   for (var i = 0; i < adCollection.length; i++) {
