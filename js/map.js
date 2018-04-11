@@ -91,16 +91,15 @@ var adCollection = createAds(COUNT_ADS);
 var map = document.querySelector('.map');
 map.classList.remove('map--faded');
 
-// Шаблон меток
-var adsPin = document.querySelector('template').content.querySelector('.map__pin');
 
 // Создание метки
-var renderPin = function (ads, i) {
+var renderPin = function (ad) {
+  var adsPin = document.querySelector('template').content.querySelector('.map__pin');
   var pin = adsPin.cloneNode(true);
-  pin.querySelector('img').src = ads[i].author.avatar;
-  pin.querySelector('img').alt = ads[i].offer.title;
-  pin.style.left = ads[i].location.x - pin.style.width / 2 + 'px';
-  pin.style.top = ads[i].location.y - pin.style.height + 'px';
+  pin.querySelector('img').src = ad.author.avatar;
+  pin.querySelector('img').alt = ad.offer.title;
+  pin.style.left = ad.location.x - pin.style.width / 2 + 'px';
+  pin.style.top = ad.location.y - pin.style.height + 'px';
 
   return pin;
 };
@@ -108,13 +107,10 @@ var renderPin = function (ads, i) {
 var displayPinList = function () {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < adCollection.length; i++) {
-    fragment.appendChild(renderPin(adCollection, i));
+    fragment.appendChild(renderPin(adCollection[i]));
   }
   map.appendChild(fragment);
 };
-
-// Шаблон окон объявлений
-var adsCard = document.querySelector('template').content.querySelector('.map__card');
 
 // Создание элементов features
 var createFeatureElements = function (array) {
@@ -142,20 +138,21 @@ var createPhotoElements = function (array) {
   return fragment;
 };
 
-var renderCard = function (ads, i) {
+var renderCard = function (ad) {
+  var adsCard = document.querySelector('template').content.querySelector('.map__card');
   var card = adsCard.cloneNode(true);
-  card.querySelector('.popup__title').textContent = ads[i].offer.title;
-  card.querySelector('.popup__text--address').textContent = ads[i].offer.address;
-  card.querySelector('.popup__text--price').textContent = ads[i].offer.price + '₽/ночь';
-  card.querySelector('.popup__type').textContent = translateType(ads[i].offer.type);
-  card.querySelector('.popup__text--capacity').textContent = ads[i].offer.rooms + ' комнаты для ' + ads[i].offer.guests + ' гостей';
-  card.querySelector('.popup__text--time').textContent = 'Заезд после ' + ads[i].offer.checkin + ', выезд до ' + ads[i].offer.checkout;
+  card.querySelector('.popup__title').textContent = ad.offer.title;
+  card.querySelector('.popup__text--address').textContent = ad.offer.address;
+  card.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
+  card.querySelector('.popup__type').textContent = translateType(ad.offer.type);
+  card.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
+  card.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
   card.querySelector('.popup__features').innerHTML = '';
-  card.querySelector('.popup__features').appendChild(createFeatureElements(ads[i].offer.features));
-  card.querySelector('.popup__description').textContent = ads[i].offer.description;
+  card.querySelector('.popup__features').appendChild(createFeatureElements(ad.offer.features));
+  card.querySelector('.popup__description').textContent = ad.offer.description;
   card.querySelector('.popup__photos').innerHTML = '';
-  card.querySelector('.popup__photos').appendChild(createPhotoElements(ads[i].offer.photos));
-  card.querySelector('.popup__avatar').src = ads[i].author.avatar;
+  card.querySelector('.popup__photos').appendChild(createPhotoElements(ad.offer.photos));
+  card.querySelector('.popup__avatar').src = ad.author.avatar;
   return card;
 };
 
@@ -163,12 +160,12 @@ var displayCardList = function () {
   var fragment = document.createDocumentFragment();
   var cardContainer = document.querySelector('.map__filters-container');
   for (var i = 0; i < adCollection.length; i++) {
-    fragment.appendChild(renderCard(adCollection, i));
+    fragment.appendChild(renderCard(adCollection[i]));
   }
   map.insertBefore(fragment, cardContainer);
 };
 
-displayPinList();
-displayCardList();
+displayPinList(adCollection);
+displayCardList(adCollection);
 
 
