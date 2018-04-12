@@ -1,12 +1,18 @@
 'use strict';
-var COUNT_ADS = 8;
-var titles = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
-var types = ['palace', 'flat', 'house', 'bungalo'];
-var checkin = ['12:00', '13:00', '14:00'];
-var checkout = ['12:00', '13:00', '14:00'];
-var photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-var avatars = ['01', '02', '03', '04', '05', '06', '07', '08'];
-var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+var COUNT_ADS =  8;
+var adData = {
+  titles: ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'],
+  types: ['palace', 'flat', 'house', 'bungalo'],
+  checkin: ['12:00', '13:00', '14:00'],
+  checkout: ['12:00', '13:00', '14:00'],
+  photos: ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'],
+  avatars: ['01', '02', '03', '04', '05', '06', '07', '08'],
+  features: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner']
+};
+
+var map = document.querySelector('.map');
+map.classList.remove('map--faded');
+
 
 // Функция для случайного числа
 var getRandomNumber = function (min, max) {
@@ -21,10 +27,6 @@ var sortRandomArray = function (arr) {
   return arr.sort(compareRandom);
 };
 
-sortRandomArray(avatars);
-sortRandomArray(titles);
-sortRandomArray(features);
-sortRandomArray(photos);
 
 // Функция для рандомного индекса
 var getRandomIndex = function (arr) {
@@ -50,33 +52,38 @@ var translateType = function (type) {
 
 
 // Функция создания объявлений
-var createAds = function (maxAds) {
+var createAds = function (data, maxAds) {
   var ads = [];
   var featuresList = [];
-  var randomNumber = getRandomNumber(0, features.length);
+  var randomNumber = getRandomNumber(0, data.features.length);
+
+  sortRandomArray(data.avatars);
+  sortRandomArray(data.titles);
+  sortRandomArray(data.features);
+  sortRandomArray(data.photos);
   for (var i = 0; i < randomNumber; i++) {
-    featuresList.push(features[i]);
+    featuresList.push(data.features[i]);
   }
   for (i = 0; i < maxAds; i++) {
     var ad = {
       'author': {
-        'avatar': 'img/avatars/user' + avatars[i] + '.png'
+        'avatar': 'img/avatars/user' + data.avatars[i] + '.png'
       },
       'location': {
         'x': getRandomNumber(300, 900),
         'y': getRandomNumber(150, 500),
       },
       'offer': {
-        'title': titles[i],
+        'title': data.titles[i],
         'price': getRandomNumber(1000, 1000000),
-        'type': types[getRandomIndex(types)],
+        'type': data.types[getRandomIndex(data.types)],
         'rooms': getRandomNumber(1, 5),
         'guests': getRandomNumber(1, 5),
-        'checkin': checkin[getRandomIndex(checkin)],
-        'checkout': checkout[getRandomIndex(checkout)],
+        'checkin': data.checkin[getRandomIndex(data.checkin)],
+        'checkout': data.checkout[getRandomIndex(data.checkout)],
         'features': featuresList,
         'description': '',
-        'photos': photos
+        'photos': data.photos
       },
     };
     ad.offer.address = ad.location.x + ', ' + ad.location.y;
@@ -86,11 +93,7 @@ var createAds = function (maxAds) {
   return ads;
 };
 
-var adCollection = createAds(COUNT_ADS);
-
-var map = document.querySelector('.map');
-map.classList.remove('map--faded');
-
+var adCollection = createAds(adData, COUNT_ADS);
 
 // Создание метки
 var renderPin = function (ad) {
@@ -104,12 +107,12 @@ var renderPin = function (ad) {
   return pin;
 };
 
-var displayPinList = function () {
+var displayPinList = function (location) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < adCollection.length; i++) {
     fragment.appendChild(renderPin(adCollection[i]));
   }
-  map.appendChild(fragment);
+  location.appendChild(fragment);
 };
 
 // Создание элементов features
@@ -124,6 +127,7 @@ var createFeatureElements = function (array) {
   return fragment;
 };
 
+// Создание элементов фото
 var createPhotoElements = function (array) {
   var fragment = document.createDocumentFragment();
   var photoElement;
@@ -156,16 +160,16 @@ var renderCard = function (ad) {
   return card;
 };
 
-var displayCardList = function () {
+var displayCardList = function (location) {
   var fragment = document.createDocumentFragment();
   var cardContainer = document.querySelector('.map__filters-container');
   for (var i = 0; i < adCollection.length; i++) {
     fragment.appendChild(renderCard(adCollection[i]));
   }
-  map.insertBefore(fragment, cardContainer);
+  location.insertBefore(fragment, cardContainer);
 };
 
-displayPinList(adCollection);
-displayCardList(adCollection);
+displayPinList(map);
+displayCardList(map);
 
 
