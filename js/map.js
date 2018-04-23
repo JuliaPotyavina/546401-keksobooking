@@ -131,7 +131,7 @@ var createPin = function (ad) {
   pin.style.left = ad.location.x - pin.style.width / 2 + 'px';
   pin.style.top = ad.location.y - pin.style.height + 'px';
 
-  pin.addEventListener('click', function() {
+  pin.addEventListener('click', function () {
     adPinClickHandler(ad);
   });
 
@@ -216,7 +216,6 @@ var setFormAddress = function (addr, pin, defPoint, location) {
   if (location.classList.contains('map--faded')) {
     addr.value = x + ', ' + y;
   } else {
-    var gap = 22;
     y = Math.floor(y + (mainPin.offsetHeight / 2) + PIN_GAP - INAGE_OFFSET);
 
     addr.value = x + ', ' + y;
