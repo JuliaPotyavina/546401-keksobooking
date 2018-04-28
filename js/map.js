@@ -270,47 +270,18 @@ var setAppartmentType = function () {
 
 // Установка количества гостей в зависимости от количества комнат
 var setRoomCapacity = function () {
-  var selectedRoomValue = roomNumber.options[roomNumber.selectedIndex].value;
-
-  switch (selectedRoomValue) {
-    case '1':
-      for (var i = 0; i < capacity.options.length; i++) {
-        if (capacity.options[i].value !== '1') {
-          capacity.options[i].style.display = 'none';
-        } else {
-          capacity.options[i].style.display = 'block';
-          capacity.options[i].selected = true;
-        }
-      }
-      break;
-    case '2':
-      for (i = 0; i < capacity.options.length; i++) {
-        if (capacity.options[i].value > '2' || capacity.options[i].value === '0') {
-          capacity.options[i].style.display = 'none';
-        } else {
-          capacity.options[i].style.display = 'block';
-        }
-      }
-      break;
-    case '3':
-      for (i = 0; i < capacity.options.length; i++) {
-        if (capacity.options[i].value === '0') {
-          capacity.options[i].style.display = 'none';
-        } else {
-          capacity.options[i].style.display = 'block';
-        }
-      }
-      break;
-    case '100':
-      for (i = 0; i < capacity.options.length; i++) {
-        if (capacity.options[i].value !== '0') {
-          capacity.options[i].style.display = 'none';
-        } else {
-          capacity.options[i].style.display = 'block';
-          capacity.options[i].selected = true;
-        }
-      }
-      break;
+  var selectedRoom = roomNumber.options[roomNumber.selectedIndex];
+  for (var i = 0; i < capacity.options.length; i++) {
+    var option = capacity.options[i];
+    if (selectedRoom.value >= option.value && option.value !== '0' && selectedRoom.value !== '100') {
+      option.style.display = 'block';
+      option.selected = true;
+    } else if (selectedRoom.value === '100' && option.value === '0') {
+      option.style.display = 'block';
+      option.selected = true;
+    } else {
+      option.style.display = 'none';
+    }
   }
 };
 
