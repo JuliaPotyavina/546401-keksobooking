@@ -1,8 +1,8 @@
 'use strict';
 
 var COUNT_ADS = 8;
+var IMAGE_OFFSET = 7;
 var PIN_GAP = 22;
-var INAGE_OFFSET = 7;
 var adData = {
   titles: ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'],
   types: ['palace', 'flat', 'house', 'bungalo'],
@@ -24,7 +24,7 @@ var checkIn = document.querySelector('#timein');
 var checkOut = document.querySelector('#timeout');
 var roomNumber = document.querySelector('#room_number');
 var capacity = document.querySelector('#capacity');
-var startMainPinCoords = [Math.floor(mainPin.offsetLeft + mainPin.offsetWidth / 2), Math.floor(mainPin.offsetTop + mainPin.offsetHeight / 2)];
+
 
 // Карта и поля формы находятся в неактивном режиме
 
@@ -209,14 +209,14 @@ var removeCards = function (location) {
 };
 
 // Установка координат основной метки
-var setFormAddress = function (addr, pin, defPoint, location) {
-  var x = defPoint[0];
-  var y = defPoint[1];
+var setFormAddress = function (addr, pin, location) {
+  var x = Math.floor(mainPin.offsetLeft + mainPin.offsetWidth / 2);
+  var y = Math.floor(mainPin.offsetTop + mainPin.offsetHeight / 2);
 
   if (location.classList.contains('map--faded')) {
     addr.value = x + ', ' + y;
   } else {
-    y = Math.floor(y + (mainPin.offsetHeight / 2) + PIN_GAP - INAGE_OFFSET);
+    y = Math.floor(y + (mainPin.offsetHeight / 2) + PIN_GAP - IMAGE_OFFSET);
 
     addr.value = x + ', ' + y;
   }
@@ -230,7 +230,7 @@ var activateMap = function () {
     adFields[i].disabled = false;
   }
 
-  setFormAddress(formAddress, mainPin, startMainPinCoords, map);
+  setFormAddress(formAddress, mainPin, map);
   displayPinList(adCollection, map);
 };
 
@@ -286,10 +286,6 @@ var setRoomCapacity = function () {
 };
 
 // Обработчики событий
-var mainPinMouseUpHandler = function () {
-  activateMap();
-  mainPin.removeEventListener('mouseup', mainPinMouseUpHandler);
-};
 
 var adPinClickHandler = function (ad) {
   removeCards(map);
@@ -313,8 +309,49 @@ var checkOutChangeHandler = function () {
   }
 };
 
-setFormAddress(formAddress, mainPin, startMainPinCoords, map);
-mainPin.addEventListener('mouseup', mainPinMouseUpHandler);
+
+//  Перемещение метки
+mainPin.addEventListener('mousedown', function (evt) {
+  activateMap();
+  evt.preventDefault();
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+    mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+    mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+    if (parseInt(mainPin.style.top, 10) < 0) {
+      mainPin.style.top = 0 + 'px';
+    } else if (parseInt(mainPin.style.top, 10) > map.clientHeight - mainPin.scrollHeight) {
+      mainPin.style.top = map.clientHeight - mainPin.scrollHeight + 'px';
+    }
+    if (parseInt(mainPin.style.left, 10) < 0) {
+      mainPin.style.left = 0 + 'px';
+    } else if (parseInt(mainPin.style.left, 10) > map.clientWidth - mainPin.scrollWidth) {
+      mainPin.style.left = map.clientWidth - mainPin.scrollWidth + 'px';
+    }
+
+    setFormAddress(formAddress, mainPin, map);
+  };
+  var onMouseUp = function () {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
+
+setFormAddress(formAddress, mainPin, map);
 adForm.addEventListener('change', formChangeHandler);
 checkIn.addEventListener('change', checkInChangeHandler);
 checkOut.addEventListener('change', checkOutChangeHandler);
