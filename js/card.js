@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+(function () {
   // Создание элементов features
   var createFeatureElements = function (array) {
     var fragment = document.createDocumentFragment();
@@ -10,7 +10,6 @@
       featureElement.className = 'popup__feature popup__feature--' + array[i];
       fragment.appendChild(featureElement);
     }
-    console.log(array);
     return fragment;
   };
 
